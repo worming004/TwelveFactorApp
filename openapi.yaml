@@ -1,0 +1,33 @@
+openapi: '3.0.2'
+info:
+  title: mail sender
+  version: '1.0'
+paths:
+  /mail:
+    post:
+      summary: send an email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MailRequest'
+      responses:
+        '201':
+          description: OK
+components:
+  schemas:
+    MailRequest:
+      type: object
+      properties:
+        to:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+      required:
+        - to
+        - subject
+        - body
+        
