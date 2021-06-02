@@ -13,8 +13,8 @@ type Server struct {
 	mail.MailSender
 }
 
-func NewServer(mailSender mail.MailSender, address string, openApiContent []byte, eventRepository EventRepository, jwtWrap auth.JwtWrapper) Server {
-	routes := getHandlers(mailSender, openApiContent, eventRepository, jwtWrap)
+func NewServer(mailSender mail.MailSender, address string, openApiContent []byte, eventRepository EventRepository, jwtWrap auth.JwtWrapper, version string) Server {
+	routes := getHandlers(mailSender, openApiContent, eventRepository, jwtWrap, version)
 	serv := http.Server{
 		Addr:    address,
 		Handler: routes,

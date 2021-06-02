@@ -21,6 +21,8 @@ func (n nullMailSender) SendMail(m mail.Mail) error {
 	return nil
 }
 
+const version string = "1.0.2"
+
 func main() {
 	mongoClient, err := db.NewDefaultMongoClient()
 	if err != nil {
@@ -32,9 +34,12 @@ func main() {
 	defer mongoClient.Disconnect(contextTimeout)
 	eventRepository := db.NewMongoEventRepository(mongoClient)
 	address := os.Getenv("TWELVE_SERVER_ADDRESS")
+	if address == "" {
+		address = ":8080"
+	}
 	sender := getMailSender()
 	jwtWrap := auth.GetDefaultJwtWrapper()
-	server := server.NewServer(sender, address, openApiContent, eventRepository, jwtWrap)
+	server := server.NewServer(sender, address, openApiContent, eventRepository, jwtWrap, version)
 
 	server.Run()
 }

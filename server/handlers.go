@@ -12,7 +12,7 @@ import (
 	"github.com/worming004/TwelveFactorApp/mail"
 )
 
-func getHandlers(sender mail.MailSender, openApiContent []byte, eventRepository EventRepository, jwtWrap auth.JwtWrapper) *mux.Router {
+func getHandlers(sender mail.MailSender, openApiContent []byte, eventRepository EventRepository, jwtWrap auth.JwtWrapper, version string) *mux.Router {
 	router := mux.NewRouter()
 	authMiddleware := getAuthMiddleware(jwtWrap)
 	router.Handle("/mail", authMiddleware(postMailHandler(sender, eventRepository))).Methods("POST")
@@ -21,7 +21,7 @@ func getHandlers(sender mail.MailSender, openApiContent []byte, eventRepository 
 	router.HandleFunc("/jwt", jwtWrap.CreateToken).Methods("POST")
 	router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		logrus.Info("/version called")
-		w.Write([]byte("1.0.1"))
+		w.Write([]byte(version))
 	}).Methods("GET")
 
 	return router
