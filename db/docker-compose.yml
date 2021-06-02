@@ -1,0 +1,14 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo:4.2.6-bionic
+    restart: always
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: example
+    # volumes: 
+    #   - ./init-db.js:/docker-entrypoint-initdb.d/init-db.js:ro
+    ports: 
+      - 27017:27017

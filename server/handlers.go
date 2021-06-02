@@ -1,19 +1,22 @@
 package server
 
 import (
-	_ "embed"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/worming004/TwelveFactorApp/auth"
 	"github.com/worming004/TwelveFactorApp/mail"
 )
 
-func getHandlers(sender mail.MailSender, openApiContent []byte) *mux.Router {
+func getHandlers(sender mail.MailSender, openApiContent []byte, eventRepository EventRepository, jwtWrap auth.JwtWrapper) *mux.Router {
 	router := mux.NewRouter()
-	router.Handle("/mail", postMailHandler(sender)).Methods("POST")
+	authMiddleware := getAuthMiddleware(jwtWrap)
+	router.Handle("/mail", authMiddleware(postMailHandler(sender, eventRepository))).Methods("POST")
 	router.HandleFunc("/openapi.yaml", serveOpenApi(openApiContent)).Methods("GET")
 	router.HandleFunc("/openapi.yml", serveOpenApi(openApiContent)).Methods("GET")
+	router.HandleFunc("/jwt", jwtWrap.CreateToken).Methods("POST")
 
 	return router
 }
@@ -30,7 +33,14 @@ type PostMailRequest struct {
 	Body    string `json:"Body"`
 }
 
-func postMailHandler(sender mail.MailSender) http.HandlerFunc {
+type Event struct {
+	Subject string
+}
+type EventRepository interface {
+	CreateEvent(Event) error
+}
+
+func postMailHandler(sender mail.MailSender, eventRepository EventRepository) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var request PostMailRequest
 		err := json.NewDecoder(r.Body).Decode(&request)
@@ -39,14 +49,25 @@ func postMailHandler(sender mail.MailSender) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
-		err = sender.SendMail(mail.Mail{
+		m := mail.Mail{
 			To:      request.To,
 			Subject: request.Subject,
 			Body:    []byte(request.Body),
-		})
+		}
+
+		err = sender.SendMail(m)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = eventRepository.CreateEvent(Event{m.Subject})
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
+			return
 		}
 
 		w.WriteHeader(http.StatusCreated)

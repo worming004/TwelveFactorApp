@@ -1,4 +1,5 @@
 POST http://127.0.0.1:8080/mail HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsImV4cCI6MTYyMjc0OTI5NSwiaXNzIjoiTWFpbCJ9.xE0oDk5ecbYlu5hwl0aKM4FuICECH4yZMbAm024f1d0
 
 {
     "to": "mathieu.scolas@craftlabit.be",
