@@ -43,7 +43,8 @@ func (j *JwtWrapper) GenerateToken(email string) (signedToken string, err error)
 }
 
 type CreateTokenRequest struct {
-	Mail string `json:"email"`
+	Mail     string `json:"email"`
+	Password string `json:"password"`
 }
 
 type CreateTokenResponse struct {
@@ -55,6 +56,11 @@ func (j *JwtWrapper) CreateToken(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if request.Password != os.Getenv("TWELVE_AUTH_PASSWORD") {
+		http.Error(w, "wrong password", http.StatusBadRequest)
 		return
 	}
 
