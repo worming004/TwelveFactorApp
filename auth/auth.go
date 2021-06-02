@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/worming004/TwelveFactorApp/log"
 )
 
 // JwtWrapper wraps the signing key and the issuer
@@ -55,18 +56,18 @@ func (j *JwtWrapper) CreateToken(w http.ResponseWriter, r *http.Request) {
 	var request CreateTokenRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.WriteErrorLog(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if request.Password != os.Getenv("TWELVE_AUTH_PASSWORD") {
-		http.Error(w, "wrong password", http.StatusBadRequest)
+		log.WriteErrorLog(w, "wrong password", http.StatusBadRequest)
 		return
 	}
 
 	tok, err := j.GenerateToken(request.Mail)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.WriteErrorLog(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

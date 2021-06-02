@@ -6,7 +6,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"github.com/worming004/TwelveFactorApp/auth"
+	"github.com/worming004/TwelveFactorApp/log"
 	"github.com/worming004/TwelveFactorApp/mail"
 )
 
@@ -46,7 +48,7 @@ func postMailHandler(sender mail.MailSender, eventRepository EventRepository) ht
 		err := json.NewDecoder(r.Body).Decode(&request)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.WriteErrorLog(w, err.Error(), http.StatusBadRequest)
 		}
 
 		m := mail.Mail{
@@ -58,18 +60,19 @@ func postMailHandler(sender mail.MailSender, eventRepository EventRepository) ht
 		err = sender.SendMail(m)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.WriteErrorLog(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		err = eventRepository.CreateEvent(Event{m.Subject})
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.WriteErrorLog(w, err.Error(), http.StatusInternalServerError)
 			fmt.Println(err)
 			return
 		}
 
+		logrus.Info("send mail ok")
 		w.WriteHeader(http.StatusCreated)
 	}
 }

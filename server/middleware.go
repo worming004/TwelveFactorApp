@@ -4,7 +4,9 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"github.com/worming004/TwelveFactorApp/auth"
+	"github.com/worming004/TwelveFactorApp/log"
 )
 
 func getAuthMiddleware(jwtWrap auth.JwtWrapper) func(http.Handler) http.Handler {
@@ -12,7 +14,7 @@ func getAuthMiddleware(jwtWrap auth.JwtWrapper) func(http.Handler) http.Handler 
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
-				http.Error(w, "forbidden", http.StatusForbidden)
+				log.WriteErrorLog(w, "forbidden", http.StatusForbidden)
 				return
 			}
 
@@ -21,16 +23,17 @@ func getAuthMiddleware(jwtWrap auth.JwtWrapper) func(http.Handler) http.Handler 
 			if len(splittedHeader) == 2 {
 				tokenValue = strings.TrimSpace(splittedHeader[1])
 			} else {
-				http.Error(w, "bad format for Authorization header", http.StatusBadRequest)
+				log.WriteErrorLog(w, "bad format for Authorization header", http.StatusBadRequest)
 				return
 			}
 
 			_, err := jwtWrap.ValidateToken(tokenValue)
 			if err != nil {
-				http.Error(w, "unauthorized", http.StatusUnauthorized)
+				log.WriteErrorLog(w, "unauthorized", http.StatusUnauthorized)
 				return
 			}
 
+			logrus.Info("auth middleware ok")
 			next.ServeHTTP(w, r)
 		})
 	}
