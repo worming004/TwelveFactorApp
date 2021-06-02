@@ -9,7 +9,7 @@ RUN go install -v ./...
 #final stage
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
-COPY --from=builder /go/bin/app /app
-ENTRYPOINT ./app
+COPY --from=builder /go/bin/TwelveFactorApp /TwelveFactorApp
+ENTRYPOINT ./TwelveFactorApp
 LABEL Name=twelvefactorapp Version=0.0.1
 EXPOSE 8080
