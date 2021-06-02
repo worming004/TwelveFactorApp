@@ -21,7 +21,7 @@ func (n nullMailSender) SendMail(m mail.Mail) error {
 	return nil
 }
 
-const version string = "1.0.2"
+const version string = "1.1.1"
 
 func main() {
 	mongoClient, err := db.NewDefaultMongoClient()

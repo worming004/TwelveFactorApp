@@ -19,10 +19,12 @@ func getHandlers(sender mail.MailSender, openApiContent []byte, eventRepository 
 	router.HandleFunc("/openapi.yaml", serveOpenApi(openApiContent)).Methods("GET")
 	router.HandleFunc("/openapi.yml", serveOpenApi(openApiContent)).Methods("GET")
 	router.HandleFunc("/jwt", jwtWrap.CreateToken).Methods("POST")
-	router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+	var versionHandler http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
 		logrus.Info("/version called")
 		w.Write([]byte(version))
-	}).Methods("GET")
+	}
+	router.HandleFunc("/version", versionHandler).Methods("GET")
+	router.Handle("/auth/version", authMiddleware(versionHandler)).Methods("GET")
 
 	return router
 }
