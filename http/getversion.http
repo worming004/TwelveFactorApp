@@ -1,1 +1,2 @@
-GET http://localhost:8080/version HTTP/1.1
+GET http://localhost:8080/auth/version HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbWFpbCI6IiIsImV4cCI6MTYyMjc1Mjg0OCwiaXNzIjoiTWFpbCJ9.pr038EFKkrC-_bl6BX3yklv67OC8GtTotYlSGsu58rc
