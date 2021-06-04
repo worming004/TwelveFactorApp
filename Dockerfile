@@ -1,9 +1,12 @@
 #build stage
 FROM golang:alpine AS builder
-RUN apk add --no-cache git
+RUN apk add --no-cache git build-base
 WORKDIR /go/src/app
+COPY ./go.mod ./go.mod
+COPY ./go.sum ./go.sum
+RUN go mod download
 COPY . .
-RUN go get -d -v ./...
+RUN go test ./...
 RUN go install -v ./...
 
 #final stage
