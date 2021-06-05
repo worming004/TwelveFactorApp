@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/sirupsen/logrus"
 	"github.com/worming004/TwelveFactorApp/log"
 )
 
@@ -53,6 +54,7 @@ type CreateTokenResponse struct {
 }
 
 func (j *JwtWrapper) CreateToken(w http.ResponseWriter, r *http.Request) {
+	logrus.Info("/jwt called")
 	var request CreateTokenRequest
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
