@@ -50,17 +50,17 @@
 
 ### Des instances jetable
 
-* Les services ont pour intention d'être constamment déplacé. Ils peuvent s'allumer et s'éteindre a tout moment.
+* Les services ont pour intention d'être constamment déplacé. Ils peuvent s'allumer et s'éteindre a tout moment
 * Les services doivent démarrer le plus vite possible, et s'éteindre gracieusement. Ils devront terminer leur requête, et ne plus accepter les nouvelles
 
 ### Parité dev prod
 
-* Devops friendly, les applications doivent être codé et déployé par la même équipe.
+* Devops friendly, les applications doivent être codé et déployé par la même équipe
 * Les différents environnements doivent utiliser la même infrastucture, et la même pile technologique
 
 ### Loggez en tant que stream
 
-* Les logs doivent être traité en tant que stream dans stdout.
+* Les logs doivent être traité en tant que stream dans stdout
 * Pas de tampon ni de gestion de fichier local sur le serveur applicatif
 * La persistance des logs se fait par l'environnement d'execution
 
