@@ -25,6 +25,9 @@ func getHandlers(sender mail.MailSender, openApiContent []byte, eventRepository 
 	}
 	router.HandleFunc("/version", versionHandler).Methods("GET")
 	router.Handle("/auth/version", authMiddleware(versionHandler)).Methods("GET")
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("ok"))
+	}).Methods("GET")
 
 	return router
 }
